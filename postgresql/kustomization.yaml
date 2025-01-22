@@ -3,3 +3,10 @@ kind: Kustomization
 
 resources:
   - operator.yaml
+
+# uncomment the secretgenerator if you are enabling postgresql database automatic backup
+# secretGenerator:
+#   - name: bunkerweb-s3
+#     literals:
+#       - ACCESS_KEY_ID=xxxxxxxxxxxxxxxxxxxx
+#       - ACCESS_SECRET_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx

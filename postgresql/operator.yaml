@@ -69,3 +69,16 @@ spec:
         requests:
           storage: 5Gi
       volumeMode: Filesystem
+  # uncomment the backup section if you want to enable postgresql database automatic backup
+  # backup:
+  #   barmanObjectStore:
+  #     destinationPath: s3://bunkerweb-backups
+  #     endpointURL: https://s3.amazonaws.com
+  #     serverName: bunkerweb
+  #     s3Credentials:
+  #       accessKeyId:
+  #         name: bunkerweb-s3
+  #         key: ACCESS_KEY_ID
+  #       secretAccessKey:
+  #         name: bunkerweb-s3
+  #         key: ACCESS_SECRET_KEY
