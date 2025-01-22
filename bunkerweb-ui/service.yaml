@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: svc-bunkerweb-ui
+spec:
+  type: ClusterIP
+  selector:
+    app: bunkerweb-ui
+  ports:
+    - name: http
+      protocol: TCP
+      port: 7000
+      targetPort: 7000

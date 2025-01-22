@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: bunkerweb
+spec:
+  selector:
+    matchLabels:
+      app: bunkerweb
+  template:
+    metadata:
+      labels:
+        app: bunkerweb
+      # mandatory annotation
+      annotations:
+        bunkerweb.io/INSTANCE: "yes"
+    spec:
+      serviceAccountName: sa-bunkerweb
+      containers:
+        # using bunkerweb as name is mandatory
+        - name: bunkerweb
+          image: bunkerity/bunkerweb:1.5.12
+          imagePullPolicy: Always
+          securityContext:
+            runAsUser: 101
+            runAsGroup: 101
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+            - name: https
+              containerPort: 8443
+              protocol: TCP
+            # - containerPort: 8080
+            #   hostPort: 80
+            # - containerPort: 8443
+            #   hostPort: 443
+          env:
+            - name: KUBERNETES_MODE
+              value: "yes"
+            # replace with your DNS resolvers
+            # e.g. : kube-dns.kube-system.svc.cluster.local
+            - name: DNS_RESOLVERS
+              value: "rke2-coredns-rke2-coredns.kube-system.svc.cluster.local"
+            - name: USE_API
+              value: "yes"
+            # 10.0.0.0/8 is the cluster internal subnet
+            - name: API_WHITELIST_IP
+              value: "127.0.0.0/8 10.0.0.0/8"
+            - name: SERVER_NAME
+              value: ""
+            - name: MULTISITE
+              value: "yes"
+            - name: USE_REDIS
+              value: "yes"
+            - name: REDIS_HOST
+              value: "svc-bunkerweb-redis.bunkerweb.svc.cluster.local"
+#### https://docs.bunkerweb.io/latest/quickstart-guide/#http-header
+            # - name: USE_REAL_IP
+            #   value: "yes"
+            # - name: REAL_IP_FROM
+            #   value: "1.2.3.0/24 100.64.0.0/10"
+            # - name: REAL_IP_HEADER
+            #   value: "X-Forwarded-For"
+#### https://docs.bunkerweb.io/latest/quickstart-guide/#proxy-protocol
+            # - name: USE_REAL_IP
+            #   value: "yes"
+#####
+          livenessProbe:
+            exec:
+              command:
+                - /usr/share/bunkerweb/helpers/healthcheck.sh
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            timeoutSeconds: 1
+            failureThreshold: 3
+          readinessProbe:
+            exec:
+              command:
+                - /usr/share/bunkerweb/helpers/healthcheck.sh
+            initialDelaySeconds: 30
+            periodSeconds: 1
+            timeoutSeconds: 1
+            failureThreshold: 3

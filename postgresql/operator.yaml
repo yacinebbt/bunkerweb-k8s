@@ -1,0 +1,71 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  labels:
+    app: bunkerweb
+    app.kubernetes.io/component: database
+    app.kubernetes.io/instance: bunkerweb
+    app.kubernetes.io/managed-by: Kustomize
+    app.kubernetes.io/name: bunkerweb
+  name: bunkerweb
+spec:
+  affinity:
+    podAntiAffinityType: preferred
+  bootstrap:
+    initdb:
+      dataChecksums: true
+      database: bunkerweb
+      encoding: UTF8
+      localeCType: C
+      localeCollate: C
+      owner: bunkerweb
+  enableSuperuserAccess: false
+  instances: 1
+  postgresGID: 26
+  postgresUID: 26
+  postgresql:
+    parameters:
+      archive_mode: "on"
+      archive_timeout: 5min
+      dynamic_shared_memory_type: posix
+      log_destination: csvlog
+      log_directory: /controller/log
+      log_filename: postgres
+      log_rotation_age: "0"
+      log_rotation_size: "0"
+      log_truncate_on_rotation: "false"
+      logging_collector: "on"
+      max_parallel_workers: "32"
+      max_replication_slots: "32"
+      max_worker_processes: "32"
+      pgaudit.log: all, -misc
+      pgaudit.log_catalog: "off"
+      pgaudit.log_parameter: "on"
+      pgaudit.log_relation: "on"
+      shared_memory_type: mmap
+      shared_preload_libraries: ""
+      ssl_max_protocol_version: TLSv1.3
+      ssl_min_protocol_version: TLSv1.3
+      wal_keep_size: 512MB
+      wal_receiver_timeout: 5s
+      wal_sender_timeout: 5s
+    syncReplicaElectionConstraint:
+      enabled: false
+  primaryUpdateStrategy: unsupervised
+  resources:
+    limits:
+      cpu: "2"
+      ephemeral-storage: 1Gi
+      memory: 2Gi
+    requests:
+      cpu: 100m
+      ephemeral-storage: "0"
+      memory: 128Mi
+  storage:
+    pvcTemplate:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 5Gi
+      volumeMode: Filesystem

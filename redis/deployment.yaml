@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bunkerweb-redis
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: bunkerweb-redis
+  template:
+    metadata:
+      labels:
+        app: bunkerweb-redis
+    spec:
+      containers:
+        - name: bunkerweb-redis
+          image: redis:7-alpine
+          imagePullPolicy: Always
