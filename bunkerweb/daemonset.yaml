@@ -18,7 +18,7 @@ spec:
       containers:
         # using bunkerweb as name is mandatory
         - name: bunkerweb
-          image: bunkerity/bunkerweb:1.5.12
+          image: bunkerity/bunkerweb:1.6.0
           imagePullPolicy: Always
           securityContext:
             runAsUser: 101
@@ -50,14 +50,16 @@ spec:
             # 10.0.0.0/8 is the cluster internal subnet
             - name: API_WHITELIST_IP
               value: "127.0.0.0/8 10.0.0.0/8"
-            - name: SERVER_NAME
-              value: ""
-            - name: MULTISITE
-              value: "yes"
-            - name: USE_REDIS
-              value: "yes"
-            - name: REDIS_HOST
-              value: "svc-bunkerweb-redis.bunkerweb.svc.cluster.local"
+            # - name: BUNKERWEB_INSTANCES # next to the major 1.6, its mandatory to add this env var to successfully connect to the bunkerweb pods.
+            #   value: "" # We don't need to specify the BunkerWeb instance here as they are automatically detected by the ingress controller
+            # - name: SERVER_NAME
+            #   value: ""
+            # - name: MULTISITE
+            #   value: "yes"
+            # - name: USE_REDIS
+            #   value: "yes"
+            # - name: REDIS_HOST
+            #   value: "svc-bunkerweb-redis.bunkerweb.svc.cluster.local"
 #### https://docs.bunkerweb.io/latest/quickstart-guide/#http-header
             # - name: USE_REAL_IP
             #   value: "yes"

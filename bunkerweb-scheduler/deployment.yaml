@@ -17,11 +17,17 @@ spec:
       serviceAccountName: sa-bunkerweb
       containers:
         - name: bunkerweb-scheduler
-          image: bunkerity/bunkerweb-scheduler:1.5.12
+          image: bunkerity/bunkerweb-scheduler:1.6.0
           imagePullPolicy: Always
           env:
             - name: KUBERNETES_MODE
               value: "yes"
+            # - name: HEALTHCHECK_INTERVAL # DEFAULT VALUE
+            #   value: 30
+            - name: BUNKERWEB_INSTANCES # next to the major 1.6, its mandatory to add this env var to successfully connect to the bunkerweb pods.
+              value: "" # We don't need to specify the BunkerWeb instance here as they are automatically detected by the ingress controller
+            - name: SERVER_NAME
+              value: "" # The server name will be filled with services annotations
             - name: DATABASE_HOST
               valueFrom:
                 secretKeyRef:
@@ -47,5 +53,13 @@ spec:
                 secretKeyRef:
                   name: bunkerweb-app
                   key: password
-            - name: "DATABASE_URI"
+            - name: DATABASE_URI
               value: "postgresql://$(DATABASE_USERNAME):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
+            - name: MULTISITE
+              value: "yes" # Mandatory setting for autoconf
+            # - name: USE_REDIS
+            #   value: "yes"
+            # - name: REDIS_HOST
+            #   value: "svc-bunkerweb-redis.default.svc.cluster.local"
+            - name: DNS_RESOLVERS
+              value: "rke2-coredns-rke2-coredns.kube-system.svc.cluster.local"

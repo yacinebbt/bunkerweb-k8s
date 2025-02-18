@@ -17,7 +17,7 @@ spec:
       serviceAccountName: sa-bunkerweb
       containers:
         - name: bunkerweb-controller
-          image: bunkerity/bunkerweb-autoconf:1.5.12
+          image: bunkerity/bunkerweb-autoconf:1.6.0
           imagePullPolicy: Always
           env:
             - name: KUBERNETES_MODE
@@ -47,13 +47,15 @@ spec:
                 secretKeyRef:
                   name: bunkerweb-app
                   key: password
+            - name: BUNKERWEB_INSTANCES # next to the major 1.6, its mandatory to add this env var to successfully connect to the bunkerweb pods.
+              value: "" # We don't need to specify the BunkerWeb instance here as they are automatically detected by the ingress controller
             - name: "DATABASE_URI"
               value: "postgresql://$(DATABASE_USERNAME):$(DATABASE_PASSWORD)@$(DATABASE_HOST):$(DATABASE_PORT)/$(DATABASE_NAME)"
-          volumeMounts:
-            - name: conf
-              mountPath: "/usr/share/bunkerweb/autoconf/IngressController.py"
-              subPath: IngressController.py
-      volumes:
-        - name: conf
-          configMap:
-            name: autoconf
+      #     volumeMounts:
+      #       - name: conf
+      #         mountPath: "/usr/share/bunkerweb/autoconf/IngressController.py"
+      #         subPath: IngressController.py
+      # volumes:
+      #   - name: conf
+      #     configMap:
+      #       name: autoconf
