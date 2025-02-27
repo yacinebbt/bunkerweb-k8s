@@ -7,6 +7,14 @@ therefore my dns service is located under kube-system namespace named:
 
 **rke2-coredns-rke2-coredns**
 
+To find yours, 
+
+```
+kubectl get svc -n kube-system | grep dns
+```
+and that's gonna be the name you should put in all occurrences in your config files (scheduler...)
+
+
 I am using a basic postgresql instance as backend database, deployed using Cloudnative-pg operator, see: https://github.com/cloudnative-pg/cloudnative-pg
 
 Refer to the official docs to see how you can deploy it (https://cloudnative-pg.io/documentation/1.25/)
@@ -18,7 +26,7 @@ Assuming you are running RKE2, you can proceed to the next steps without changin
 
 CNPG operator CRDs: Ref (https://cloudnative-pg.io/documentation/1.17/installation_upgrade/)
 ```
-kubectl apply -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.17/releases/cnpg-1.17.5.yaml
+kubectl apply -f https://raw.githubusercontent.com/cloudnative-pg/cloudnative-pg/release-1.25/releases/cnpg-1.25.0.yaml
 ```
 You can verify that with:
 ```
@@ -27,7 +35,7 @@ kubectl get deploy -n cnpg-system cnpg-controller-manager
 
 Then run the following command to install all bunkerweb required components:
 ```
-kubectl apply -k .
+kubectl apply -k . -n BUNKERWEB_NAMESPACE
 ```
 
 PS: i suppose you're in the current directory where the kustomization.yaml is located.
